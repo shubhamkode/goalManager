@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  .inputField {
+    @apply w-full px-4 py-2 mt-1 rounded-full shadow focus:outline-none;
+  }
+
+  .w-full > label {
+    @apply px-1 text-sm opacity-80;
+  }
+  .errorMessage{
+    @apply text-red-500 text-[.85rem] pl-3 pt-[.2rem] capitalize
+  }
+}
+body {
+  font-family: "Montserrat", sans-serif;
+}
