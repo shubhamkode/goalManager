@@ -3,16 +3,16 @@ import * as jwt from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
 import createHttpError from "http-errors";
 
-export const protect: RequestHandler = asyncHandler(async (req, res, next) => {
-  const JWT_SECRET = process.env.JWT_SECRET || "secret123";
+import { env } from "../config/env";
 
+export const protect: RequestHandler = asyncHandler(async (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1];
 
   if (!token) {
     throw createHttpError(400, "Token Not Found");
   }
 
-  const decoded: any = jwt.verify(token, JWT_SECRET);
+  const decoded: any = jwt.verify(token, env.JWT_SECRET);
 
   const userId = decoded.userId;
 

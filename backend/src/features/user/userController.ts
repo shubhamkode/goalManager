@@ -5,6 +5,7 @@ import { prisma } from "../../config/db";
 import { RequestHandler } from "express";
 import * as yup from "yup";
 import createHttpError from "http-errors";
+import { env } from "../../config/env";
 
 //@desc Register New User
 //@route POST /v1/api/auth
@@ -79,8 +80,7 @@ const getUserInfo: RequestHandler = asyncHandler(async (req, res) => {
 });
 
 const generatetoken = (userId: string) => {
-  const JWT_SECRET = process.env.JWT_SECRET || "secret123";
-  return jwt.sign({ userId }, JWT_SECRET, { expiresIn: "30d" });
+  return jwt.sign({ userId }, env.JWT_SECRET, { expiresIn: "30d" });
 };
 
 export const UserController = {

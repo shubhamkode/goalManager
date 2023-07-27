@@ -8,8 +8,7 @@ import { goalRouter } from "./features/goal/goalRouter";
 import { userRouter } from "./features/user/userRouter";
 import { errorMiddleware } from "./middlewares/errorMiddleware";
 import { protect } from "./middlewares/authMiddleware";
-
-const PORT = process.env.PORT || 8080;
+import { env } from "./config/env";
 
 const app: Application = express();
 
@@ -34,6 +33,6 @@ app.use("/v1/api/auth", userRouter);
 
 app.use(errorMiddleware);
 
-app.listen(PORT, () =>
-  console.info(`Server is running at 'http://localhost:${PORT}'`)
+app.listen(env.PORT, () =>
+  console.info(`Server is running at 'http://localhost:${env.PORT}'`)
 );
