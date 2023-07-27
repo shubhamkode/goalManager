@@ -2,33 +2,24 @@ import React from "react";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { toast } from "react-toast";
 
-import { Page } from "../components";
-import axiosClient from "@/features/config/axiosClient";
-import { RootState } from "@/features/store";
-import { useNavigate } from "react-router-dom";
-import { login } from "@/features/store/auth/authSlice";
+import { Page } from "@/features/ui/components";
+import { setCredentials } from "@/features/store/auth/authSlice";
+import { useUserRegisterMutation } from "@/features/store/auth/authApi";
 
-const registerPageSchema = yup.object({
+const registerSchema = yup.object({
   name: yup.string().required(),
   email: yup.string().email().required(),
   password: yup.string().required(),
 });
 
-type FormData = yup.InferType<typeof registerPageSchema>;
+type FormData = yup.InferType<typeof registerSchema>;
 
-export default function RegisterPage() {
-  const navigate = useNavigate();
+export default function RegisterPageTemplate() {
   const dispatch = useDispatch();
-  const { userToken } = useSelector((state: RootState) => state.auth);
-
-  React.useEffect(() => {
-    if (userToken) {
-      navigate("/");
-    }
-  }, [userToken, navigate]);
+  const [registerUser] = useUserRegisterMutation();
 
   const [confirmPassword, setConfirmPassword] = React.useState<string>("");
   const {
@@ -37,7 +28,7 @@ export default function RegisterPage() {
     getValues,
     reset,
     formState: { errors },
-  } = useForm<FormData>({ resolver: yupResolver(registerPageSchema) });
+  } = useForm<FormData>({ resolver: yupResolver(registerSchema) });
 
   const clearFormData = () => {
     reset();
@@ -49,14 +40,14 @@ export default function RegisterPage() {
     if (formData.password !== confirmPassword) {
       return alert("Passwords mismatch");
     }
-    const response = await axiosClient.post("/auth", {
-      ...formData,
-    });
-    if (response.status === 200) {
-      dispatch(login(response.data.token));
-      toast.success("Register Success");
-      clearFormData();
-    }
+
+    await registerUser({ ...formData })
+      .unwrap()
+      .then(({ token }) => {
+        dispatch(setCredentials(token));
+        clearFormData();
+        toast.success("Register Success");
+      });
   };
 
   return (

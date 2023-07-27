@@ -15,6 +15,7 @@ export const protect: RequestHandler = asyncHandler(async (req, res, next) => {
   const decoded: any = jwt.verify(token, JWT_SECRET);
 
   const userId = decoded.userId;
+  console.log(`\n\n\n============AUTHMIDDLEWARE CALLED==================`);
 
   if (userId && typeof userId === "string") {
     res.locals.userId = userId;

@@ -1,16 +1,12 @@
-import React from "react";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { toast } from "react-toast";
 
-import { RootState } from "@/features/store";
-import { Page } from "../components";
-import axiosClient from "@/features/config/axiosClient";
-import { login } from "@/features/store/auth/authSlice";
-import { AxiosError } from "axios";
+import { Page } from "@/features/ui/components";
+import { setCredentials } from "@/features/store/auth/authSlice";
+import { useUserLoginMutation } from "@/features/store/auth/authApi";
 
 const loginPageSchema = yup.object({
   email: yup.string().email().required(),
@@ -20,16 +16,9 @@ const loginPageSchema = yup.object({
 type FormData = yup.InferType<typeof loginPageSchema>;
 
 export default function RegisterPage() {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { userToken } = useSelector((state: RootState) => state.auth);
-
-  React.useEffect(() => {
-    if (userToken) {
-      navigate("/");
-    }
-  }, [userToken, navigate]);
+  const [login] = useUserLoginMutation();
 
   const {
     register,
@@ -41,20 +30,15 @@ export default function RegisterPage() {
 
   const submitHandler = async () => {
     const formData = getValues();
-    try {
-      const response = await axiosClient.post("/auth/login", { ...formData });
-      if (response.status === 200) {
-        dispatch(login(response.data.token));
-        toast.success("Login Success");
+    await login({ ...formData })
+      .unwrap()
+      .then((data) => {
+        const { token } = data;
+        dispatch(setCredentials(token));
         reset();
-      }
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        toast.error(error.response?.data.message);
-      } else {
-        toast.error("An Error Occured");
-      }
-    }
+        toast.success("Login Success");
+      });
+
   };
 
   return (

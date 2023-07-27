@@ -3,7 +3,8 @@ import { FaSignInAlt, FaUser, FaSignOutAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 import { RootState } from "@/features/store";
-import { logout } from "@/features/store/auth/authSlice";
+import { removeCredentials } from "@/features/store/auth/authSlice";
+import { goalApi } from "@/features/store/goal/goalApi";
 
 export default function Header() {
   const dispatch = useDispatch();
@@ -39,7 +40,12 @@ export default function Header() {
         ) : (
           <button
             className="flex items-center px-5 py-2 space-x-1 text-sm font-bold text-white duration-200 bg-blue-800 rounded ring-2 ring-blue-800 hover:scale-105"
-            onClick={() => dispatch(logout())}
+            onClick={() => {
+              dispatch(removeCredentials());
+              dispatch(
+                goalApi.util.resetApiState()
+              );
+            }}
           >
             <FaSignOutAlt /> <span>SignOut</span>
           </button>
