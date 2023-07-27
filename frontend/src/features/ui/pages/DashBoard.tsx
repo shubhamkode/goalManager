@@ -1,19 +1,26 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useSelector} from "react-redux";
 
-import { Page } from "@/features/ui/components";
+import DashBoardPageTemplate from "../templates/DashBoardPageTemplate";
 import { RootState } from "@/features/store";
+import { useGetAllGoalsQuery } from "@/features/store/goal/goalApi";
 
-export default function DashBoardPage() {
+const DashBoard = () => {
   const navigate = useNavigate();
   const { userToken } = useSelector((state: RootState) => state.auth);
+
+  const { data } = useGetAllGoalsQuery();
 
   React.useEffect(() => {
     if (!userToken) {
       navigate("/auth/login");
     }
-  }, [navigate, userToken]);
+  }, [userToken, navigate]);
 
-  return <Page>DashBoardPage</Page>;
-}
+  return (
+    <>{data && <DashBoardPageTemplate username="Shubham" goals={data} />}</>
+  );
+};
+
+export default DashBoard;

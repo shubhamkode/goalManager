@@ -4,6 +4,7 @@ import asyncHandler from "express-async-handler";
 import { prisma } from "../../config/db";
 import { RequestHandler } from "express";
 import * as yup from "yup";
+import createHttpError from "http-errors";
 
 //@desc Register New User
 //@route POST /v1/api/auth
@@ -19,8 +20,7 @@ const registerUser: RequestHandler = asyncHandler(async (req, res, next) => {
     where: { email: validSchema.email },
   });
   if (userExists) {
-    res.status(400)
-    throw new Error("User Already Exists");
+    throw createHttpError(400, "User Already Exists");
   }
   const hashedPassword = await bcrypt.hash(validSchema.password, 10);
   const user = await prisma.user.create({
@@ -45,15 +45,14 @@ const loginUser: RequestHandler = asyncHandler(async (req, res) => {
     where: { email: validSchema.email },
   });
   if (!user) {
-    res.status(400)
-    throw new Error("Invalid Email or Password...");
+    throw createHttpError(400, "Invalid Email or Password...");
   }
   const passwordMatches = await bcrypt.compare(
     validSchema.password,
     user.password
   );
   if (!passwordMatches) {
-    throw new Error("Invalid Email or Password...");
+    throw createHttpError(400, "Invalid Email or Password...");
   }
   res
     .status(200)
@@ -68,8 +67,7 @@ const getUserInfo: RequestHandler = asyncHandler(async (req, res) => {
   const userId = res.locals.userId;
   const user = await prisma.user.findUnique({ where: { id: userId } });
   if (!user) {
-    res.status(400)
-    throw new Error("User not Exists or token Expired...");
+    throw createHttpError(400, "User not Exists or token Expired...");
   }
   res.status(200).json({
     id: user.id,

@@ -4,10 +4,10 @@ interface InitialState {
   userToken: string | null;
 }
 
-const userToken = localStorage.getItem("token") 
+const userToken = localStorage.getItem("token");
 
 const initialState: InitialState = {
-  userToken
+  userToken,
 };
 
 const authSlice = createSlice({
@@ -15,12 +15,12 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     login(state, action: PayloadAction<string>) {
-      localStorage.setItem("token", action.payload);
       state.userToken = action.payload;
+      localStorage.setItem("token", action.payload);
     },
     logout(state) {
-      localStorage.removeItem("token")
       state.userToken = null;
+      localStorage.removeItem("token");
     },
   },
 });

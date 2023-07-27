@@ -3,7 +3,7 @@ import { FaSignInAlt, FaUser, FaSignOutAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 import { RootState } from "@/features/store";
-import { logout } from "@/features/store/authSlice";
+import { logout } from "@/features/store/auth/authSlice";
 
 export default function Header() {
   const dispatch = useDispatch();

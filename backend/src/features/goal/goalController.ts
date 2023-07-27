@@ -2,6 +2,7 @@ import { RequestHandler } from "express";
 import asyncHandler from "express-async-handler";
 import { prisma } from "../../config/db";
 import { Goal } from "@prisma/client";
+import createHttpError from "http-errors";
 
 const { goal } = prisma;
 
@@ -29,8 +30,7 @@ const getGoalById: RequestHandler<
     where: { id: req.params.id, userId },
   });
   if (!goalById) {
-    res.status(400);
-    throw new Error("Goal Not Found");
+    throw createHttpError(400, `Goal Not Found`);
   }
   res.status(200).json({ data: goalById });
 });
@@ -65,6 +65,9 @@ const deleteGoalById: RequestHandler<
   const deletedGoal = await goal.delete({
     where: { id: req.params.id, userId },
   });
+  if (!deletedGoal) {
+    throw createHttpError(400, "Goal Not Found...");
+  }
   res.status(200).json({ data: deletedGoal });
 });
 

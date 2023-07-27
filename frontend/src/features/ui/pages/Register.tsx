@@ -9,7 +9,7 @@ import { Page } from "../components";
 import axiosClient from "@/features/config/axiosClient";
 import { RootState } from "@/features/store";
 import { useNavigate } from "react-router-dom";
-import { login } from "@/features/store/authSlice";
+import { login } from "@/features/store/auth/authSlice";
 
 const registerPageSchema = yup.object({
   name: yup.string().required(),

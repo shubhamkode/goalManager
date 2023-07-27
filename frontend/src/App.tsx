@@ -7,15 +7,17 @@ import { DashBoardPage, LoginPage, RegisterPage } from "@/features/ui/pages";
 
 export default function App() {
   return (
-    <Provider store={store}>
-      <ToastContainer position="top-right" />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<DashBoardPage />} />
-          <Route path="/auth/login" element={<LoginPage />} />
-          <Route path="/auth/register" element={<RegisterPage />} />
-        </Routes>
-      </BrowserRouter>
-    </Provider>
+    <div className="w-screen h-screen">
+      <Provider store={store}>
+        <ToastContainer position="top-right" delay={2000} />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<DashBoardPage />} />
+            <Route path="/auth/login" element={<LoginPage />} />
+            <Route path="/auth/register" element={<RegisterPage />} />
+          </Routes>
+        </BrowserRouter>
+      </Provider>
+    </div>
   );
 }

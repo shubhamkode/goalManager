@@ -9,7 +9,8 @@ import { toast } from "react-toast";
 import { RootState } from "@/features/store";
 import { Page } from "../components";
 import axiosClient from "@/features/config/axiosClient";
-import { login } from "@/features/store/authSlice";
+import { login } from "@/features/store/auth/authSlice";
+import { AxiosError } from "axios";
 
 const loginPageSchema = yup.object({
   email: yup.string().email().required(),
@@ -40,14 +41,19 @@ export default function RegisterPage() {
 
   const submitHandler = async () => {
     const formData = getValues();
-    const response = await axiosClient.post("/auth/login", { ...formData });
-    console.log((response))
-    if (response.status === 200) {
-      dispatch(login(response.data.token));
-      toast.success("Login Success");
-      reset();
-    } else if (response.status === 400) {
-      toast.error(response.data.message);
+    try {
+      const response = await axiosClient.post("/auth/login", { ...formData });
+      if (response.status === 200) {
+        dispatch(login(response.data.token));
+        toast.success("Login Success");
+        reset();
+      }
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data.message);
+      } else {
+        toast.error("An Error Occured");
+      }
     }
   };
 
